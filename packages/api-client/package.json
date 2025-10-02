@@ -3,10 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "rest/types": "./src/rest/types.ts",
-    "rest/schema": "./src/rest/schema.ts",
-    "rest/client": "./src/rest/client.ts",
-    "rest": "./src/rest/index.ts"
+    ".": "./src/index.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

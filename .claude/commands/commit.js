@@ -112,8 +112,21 @@ Please provide the complete commit message ready to use with \`git commit -m "$(
 Only output the commit message text, nothing else.
 `;
 
-  await claude.ask(prompt, { role: 'user' });
+  const response = await claude.ask(prompt, { role: 'user' });
 
-  // Wait for Claude to generate the commit message
-  // The response will be the commit message itself
+  // Extract the commit message from Claude's response
+  const commitMessage = response.text.trim();
+
+  // Ask user for confirmation
+  await claude.ask(`\n**Generated commit message:**\n\n\`\`\`\n${commitMessage}\n\`\`\`\n\nWould you like to proceed with this commit? (yes/no)`, { role: 'assistant' });
+
+  const confirmation = await claude.ask('', { role: 'user' });
+
+  if (confirmation.text.toLowerCase().trim() === 'yes' || confirmation.text.toLowerCase().trim() === 'y') {
+    // Stage all changes and create the commit
+    await claude.bash(`git add -A && git commit -m "$(cat <<'EOF'\n${commitMessage}\nEOF\n)"`);
+    await claude.ask('✅ Commit created successfully!', { role: 'assistant' });
+  } else {
+    await claude.ask('Commit cancelled.', { role: 'assistant' });
+  }
 }
