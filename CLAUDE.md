@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Turborepo monorepo for a movie search application built as a take-home exercise. The app allows users to search for movies, filter by genre, paginate results, and view detailed movie information using the Movies API (https://github.com/thisdot/movies-api).
+This is a Turborepo monorepo for a movie search application built as a take-home exercise. The app allows users to search for movies, filter by genre, paginate results, and view detailed movie information using an external Movies API
 
 **Base API URL**: `https://0kadddxyh3.execute-api.us-east-1.amazonaws.com`
 
@@ -24,6 +24,7 @@ movies-explorer/
 ## Essential Commands
 
 ### Development
+
 ```bash
 # Install dependencies
 pnpm install
@@ -41,6 +42,7 @@ turbo check-types --filter=api-client
 ```
 
 ### Build & Lint
+
 ```bash
 # Build all packages
 pnpm build
@@ -65,19 +67,23 @@ The API client is organized into separate REST and GraphQL implementations.
 ## Code Style Conventions
 
 ### Conditional Statements
+
 All if statements must use braces on separate lines:
+
 ```typescript
 // Correct
 if (condition) {
-  logic
+  logic;
 }
 
 // Incorrect
-if (condition) logic
+if (condition) logic;
 ```
 
 ### Git Commit Messages
+
 When creating git commits, append:
+
 ```
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
@@ -117,6 +123,7 @@ export default function Page() {
 **Configuration**: Enabled in `next.config.js` with `experimental: { viewTransition: true }`
 
 **How it works**:
+
 1. Wrap page content with `<ViewTransition name="identifier">`
 2. Use matching names across pages to animate transitions
 3. CSS controls animation behavior via `::view-transition-old()` and `::view-transition-new()` pseudo-elements
@@ -129,7 +136,9 @@ This project uses **AI-driven testing** with custom subagents instead of traditi
 ### Available Test Agents
 
 #### E2E Tester (`@e2e-tester`)
+
 Comprehensive end-to-end testing through realistic user scenarios:
+
 - Automatically manages dev/production server startup
 - Tests all user workflows with permutations (search, filter, pagination, navigation)
 - Validates across multiple viewports (desktop, tablet, mobile)
@@ -139,7 +148,9 @@ Comprehensive end-to-end testing through realistic user scenarios:
 **When to use**: After implementing features, fixing bugs, or before submitting changes
 
 #### Code Analyzer (`@code-analyzer`)
+
 Deep code analysis focused on logic errors and business rules:
+
 - Identifies potential runtime errors (null checks, async issues, race conditions)
 - Validates business logic implementation
 - Checks error handling coverage
@@ -151,6 +162,7 @@ Deep code analysis focused on logic errors and business rules:
 ### Testing Philosophy
 
 These agents provide better coverage than traditional unit tests by:
+
 - Testing actual user workflows end-to-end, not isolated functions
 - Catching integration issues between components and API
 - Adapting to UI changes without brittle selectors or mocks
