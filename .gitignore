@@ -38,3 +38,5 @@ yarn-error.log*
 *.pem
 
 .claude/project.md
+
+.playwright-mcp

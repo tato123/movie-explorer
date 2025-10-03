@@ -15,9 +15,9 @@
  */
 
 import {
+  isServer,
   QueryFunctionContext,
   queryOptions,
-  isServer,
 } from "@tanstack/react-query";
 import {
   GET_GENRES_MOVIES,
@@ -36,6 +36,11 @@ type RequestValue<T extends (...args: any) => any> = Parameters<
   ReturnType<ReturnType<T>>
 >[0];
 
+type OverrideOptions = Omit<
+  Parameters<typeof queryOptions>[0],
+  "queryKey" | "queryFn"
+>;
+
 const BASE_URL =
   (process?.env?.BASE_URL as string) ??
   "https://0kadddxyh3.execute-api.us-east-1.amazonaws.com";
@@ -47,48 +52,37 @@ export const getAuthTokenOptions = queryOptions({
   },
 });
 
-const crossPlatformAuthentication = (context: QueryFunctionContext) => {
-  // allow server-side rendering to work by checking if we are on the server
-  // in that case we may not have context available when prefetching
-  if (isServer) {
-    // Server-side: Fetch the auth token directly from the API
-    context.client.fetchQuery(getAuthTokenOptions);
-    const data = context.client.getQueryData<AuthTokenResponse>([
-      "authenticate",
-    ]);
-    if (!data || !data.token) {
-      throw new Error("No auth token found");
-    }
-    return data.token;
-  } else {
-    // first perform a cache lookup
+const crossPlatformAuthentication = async (context: QueryFunctionContext) => {
+  // On server side we don't store the token in the query cache
+  if (!isServer) {
     const data = context.client.getQueryData<AuthTokenResponse>([
       "authenticate",
     ]);
     if (data && data.token) {
       return Promise.resolve(data.token);
     }
-
-    // Client-side: Fetch the auth token from the local API route
-    return context.client.fetchQuery(getAuthTokenOptions).then((data) => {
-      if (!data || !data.token) {
-        throw new Error("No auth token found");
-      }
-      return data.token;
-    });
   }
+
+  // Client-side: Fetch the auth token from the local API route
+  return context.client.fetchQuery(getAuthTokenOptions).then((data) => {
+    if (!data || !data.token) {
+      throw new Error("No auth token found");
+    }
+    return data.token;
+  });
 };
 
-export const getGenreMoviesOptions = (
+export function getGenreMoviesOptions(
   request: RequestValue<typeof GET_GENRES_MOVIES>
-) =>
-  queryOptions({
+) {
+  return queryOptions({
     queryKey: ["genres-movies", request],
     queryFn: async (context: QueryFunctionContext) => {
       const token = await crossPlatformAuthentication(context);
       return GET_GENRES_MOVIES(BASE_URL)(token)(request);
     },
   });
+}
 
 export const getMoviesOptions = (request: RequestValue<typeof GET_MOVIES>) =>
   queryOptions({

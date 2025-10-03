@@ -1,5 +1,6 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { MovieCardSkeleton } from '@/components/movie/movie-card-skeleton';
+import { LoopContent } from '@/components/loop-content';
 
 export default function Loading() {
   return (
@@ -17,9 +18,9 @@ export default function Loading() {
       <div className="space-y-4">
         <Skeleton className="h-8 w-48" />
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <MovieCardSkeleton key={i} />
-          ))}
+          <LoopContent count={10}>
+            {(i) => <MovieCardSkeleton key={i} />}
+          </LoopContent>
         </div>
       </div>
     </div>

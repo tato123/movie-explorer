@@ -1,7 +1,7 @@
 import { Providers } from "@/components/providers";
 import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
-import SerachablePage from "./searchable.page";
+
 import "./globals.css";
 
 const lexend = Lexend({
@@ -20,25 +20,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  topMovies,
-  genres,
   header,
-  modal,
 }: Readonly<{
   children: React.ReactNode;
-  topMovies: React.ReactNode;
-  genres: React.ReactNode;
   header: React.ReactNode;
   modal: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={lexend.variable}>
-      <body className="font-sans antialiased bg-background text-foreground min-h-screen min-w-screen h-screen w-screen">
+      <body className="font-sans antialiased bg-background text-foreground min-h-screen overflow-x-hidden">
         <Providers>
-          <SerachablePage topMovies={topMovies} genres={genres} header={header}>
+          <div className="flex flex-col gap-3 w-full px-5">
+            {header}
             {children}
-            {modal}
-          </SerachablePage>
+          </div>
         </Providers>
       </body>
     </html>

@@ -205,10 +205,16 @@ export const GET_MOVIES =
     if (nonNullish(request?.queryParams?.limit)) {
       params.append("limit", request.queryParams.limit.toString());
     }
-    if (nonNullish(request?.queryParams?.search)) {
+    if (
+      nonNullish(request?.queryParams?.search) &&
+      request.queryParams.search.trim() !== ""
+    ) {
       params.append("search", request.queryParams.search);
     }
-    if (nonNullish(request?.queryParams?.genre)) {
+    if (
+      nonNullish(request?.queryParams?.genre) &&
+      request.queryParams.genre.trim() !== ""
+    ) {
       params.append("genre", request.queryParams.genre);
     }
 

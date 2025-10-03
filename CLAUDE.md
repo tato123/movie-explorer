@@ -149,6 +149,33 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - **Validation**: Zod v4
 - **State Management**: nuqs (URL-based state)
 - **UI Components**: Lucide icons, class-variance-authority
+- **View Transitions**: React's `unstable_ViewTransition` API (wraps native browser View Transitions API)
+
+## View Transitions
+
+This app uses Next.js 15's experimental view transitions support via React's `unstable_ViewTransition` API:
+
+```typescript
+import { unstable_ViewTransition as ViewTransition } from "react";
+
+export default function Page() {
+  return (
+    <ViewTransition name="main-content">
+      <main>
+        {/* content */}
+      </main>
+    </ViewTransition>
+  );
+}
+```
+
+**Configuration**: Enabled in `next.config.js` with `experimental: { viewTransition: true }`
+
+**How it works**:
+1. Wrap page content with `<ViewTransition name="identifier">`
+2. Use matching names across pages to animate transitions
+3. CSS controls animation behavior via `::view-transition-old()` and `::view-transition-new()` pseudo-elements
+4. Browser automatically animates between pages when navigating
 
 ## Important Notes
 
