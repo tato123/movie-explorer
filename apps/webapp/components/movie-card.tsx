@@ -1,8 +1,11 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Star } from "lucide-react";
+import { Film } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 const moviecardVariants = cva("", {
   variants: {
@@ -39,6 +42,10 @@ export function MovieCard({
 }: React.ComponentProps<"div"> &
   MovieCardProps &
   VariantProps<typeof moviecardVariants>) {
+  const [imageError, setImageError] = useState(false);
+  const showPlaceholder =
+    !movie.posterUrl || movie.posterUrl.trim() === "" || imageError;
+
   return (
     <div
       className={cn(
@@ -58,7 +65,7 @@ export function MovieCard({
               variant === "outline" && "bg-muted"
             )}
           >
-            {movie.posterUrl ? (
+            {movie.posterUrl && !showPlaceholder ? (
               <Image
                 src={movie.posterUrl}
                 alt={movie.title}
@@ -66,25 +73,20 @@ export function MovieCard({
                 className={cn(
                   "object-contain movie-poster transition-opacity group-hover:opacity-75 h-full w-full aspect-[2/3]"
                 )}
+                onError={() => setImageError(true)}
               />
             ) : (
               <div className="flex h-full items-center justify-center bg-gradient-to-br from-muted to-muted/50">
-                <Star className="h-12 w-12 text-muted-foreground" />
+                <Film className="h-12 w-12 text-muted-foreground" />
               </div>
             )}
-
-            {/* Gradient overlay on hover */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/0 to-black/0 opacity-0 transition-opacity group-hover:opacity-100" />
           </div>
         </div>
       </Link>
-
-      {/* Title below card */}
       <h3 className="font-semibold text-lg line-clamp-2 movie-title">
         {movie.title}
       </h3>
-
-      {/* Rating below title */}
       {movie.rating && (
         <div className="flex items-center gap-1 text-muted-foreground">
           <span className="text-sm">{movie.rating.split("/")[0]}</span>

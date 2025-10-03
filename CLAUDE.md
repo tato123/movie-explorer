@@ -16,6 +16,7 @@ movies-explorer/
 │   └── webapp/          # Next.js 15 application (main frontend)
 └── packages/
     ├── api-client/      # Movies API client library (REST & GraphQL)
+    ├── tanstack-query-client/ # TanStack Query hooks and options
     ├── eslint-config/   # Shared ESLint configurations
     └── typescript-config/ # Shared TypeScript configurations
 ```
@@ -59,63 +60,7 @@ pnpm format
 
 ## API Client Architecture (`packages/api-client`)
 
-The API client is organized into separate REST and GraphQL implementations with the following key patterns:
-
-### File Structure
-```
-api-client/src/
-├── rest/
-│   ├── client.ts    # Curried API methods and createClient factory
-│   ├── schema.ts    # Zod schemas for validation
-│   ├── types.ts     # TypeScript types (z.infer from schemas)
-│   ├── errors.ts    # Custom error classes
-│   └── index.ts     # Public exports
-└── graphql/
-    └── index.ts
-```
-
-### REST Client Design Patterns
-
-**Currying Pattern**: All API methods follow a functional programming curry pattern:
-```typescript
-(BASE_URL: string) => (token: string) => (params) => Promise<ResponseType>
-```
-
-**Factory Pattern**: The `createClient` function automatically fetches an auth token and returns pre-configured methods:
-```typescript
-const client = await createClient(BASE_URL);
-// All methods now have BASE_URL and token pre-applied
-await client.GET_MOVIES({ page: 1, limit: 25 });
-```
-
-### Schema & Type System
-
-- **Schemas**: All request/response schemas defined in `schema.ts` using Zod v4+
-- **Naming Convention**:
-  - Requests: `*_REQUEST` (e.g., `MOVIES_REQUEST`)
-  - Responses: `*_RESPONSE` (e.g., `MOVIES_RESPONSE`)
-- **Types**: Exported from `types.ts` using `z.infer<typeof Schema>`
-- **Validation**: Automatic validation via `parseResponse` helper throws `MOVIE_API_INVALID_SCHEMA` on failure
-
-### Error Handling
-
-Custom error classes with consistent structure (statusCode, statusText, optional customMessage):
-- `MOVIE_API_UNAUTHORIZED` - 401 errors
-- `MOVIE_API_NOT_FOUND` - 404 errors
-- `MOVIE_API_SERVICE_UNAVAILABLE` - 500+ errors
-- `MOVIE_API_UNEXPECTED_ERROR` - Other non-ok responses
-- `MOVIE_API_INVALID_SCHEMA` - Schema validation failures
-
-The `handleResponse` helper automatically checks status codes and throws appropriate errors.
-
-### Package Exports
-
-The package uses granular exports for tree-shaking:
-```typescript
-import { createClient, GET_MOVIES } from '@jfontanez/api-client/rest';
-import { MoviesResponse } from '@jfontanez/api-client/rest/types';
-import { MOVIES_RESPONSE } from '@jfontanez/api-client/rest/schema';
-```
+The API client is organized into separate REST and GraphQL implementations.
 
 ## Code Style Conventions
 

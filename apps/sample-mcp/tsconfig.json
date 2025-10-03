@@ -1,8 +1,12 @@
 {
   "extends": "@jfontanez/typescript-config/node-library.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "baseUrl": "./src"
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@jfontanez/api-client/*": ["../../packages/api-client/src/*"]
+    }
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]

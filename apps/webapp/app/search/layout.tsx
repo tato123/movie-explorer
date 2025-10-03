@@ -1,6 +1,7 @@
 import { getQueryClient } from "@/lib/get-query-client";
 import { getGenreMoviesOptions } from "@jfontanez/tanstack-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Suspense } from "react";
 
 export default async function Layout({
   children,
@@ -13,7 +14,7 @@ export default async function Layout({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      {children}
+      <Suspense fallback={<div>loading</div>}>{children}</Suspense>
     </HydrationBoundary>
   );
 }

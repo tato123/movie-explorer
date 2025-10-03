@@ -1,7 +1,7 @@
 "use client";
 
 import GenreSection from "@/components/genre-section";
-import { MovieCard } from "@/components/movie/movie-card";
+import { MovieCard } from "@/components/movie-card";
 import {
   getGenreMoviesOptions,
   getMoviesOptions,
@@ -9,14 +9,13 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { unstable_ViewTransition as ViewTransition } from "react";
 
-export default function Page({ children }: { children: React.ReactNode }) {
+export default function Page() {
   return (
     <>
       <ViewTransition name="main-content">
         <main>
           <TopMovies />
           <Genres />
-          {children}
         </main>
       </ViewTransition>
     </>
@@ -26,7 +25,9 @@ export default function Page({ children }: { children: React.ReactNode }) {
 // ---------------------------------------------------
 // These sections are currently only used in the main page
 // they have been colocated as one example of organizing component
-// content
+// content. In the @header folder I show another example
+// of using a private folder using the nextjs underscore format
+// that excludes it from routing
 // ---------------------------------------------------
 
 function Genres() {
@@ -74,10 +75,3 @@ function TopMovies() {
     </div>
   );
 }
-
-type GenreSectionProps = {
-  genre: {
-    id: string;
-    title: string;
-  };
-};

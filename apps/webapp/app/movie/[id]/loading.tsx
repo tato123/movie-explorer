@@ -1,14 +1,11 @@
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Loading() {
   return (
     <div className="min-h-screen">
-      {/* Hero skeleton */}
       <div className="relative aspect-video w-full">
         <Skeleton className="h-full w-full" />
       </div>
-
-      {/* Details skeleton */}
       <div className="p-8 space-y-4">
         <Skeleton className="h-12 w-3/4" />
         <div className="flex items-center gap-4">

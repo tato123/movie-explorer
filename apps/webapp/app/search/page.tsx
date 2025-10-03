@@ -8,47 +8,118 @@ import { useQuery } from "@tanstack/react-query";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { unstable_ViewTransition as ViewTransition } from "react";
 import { LoopContent } from "@/components/loop-content";
+import { Pagination } from "@/components/pagination";
+import { MovieSearchResult } from "@/app/search/_components/movie-search-result";
+import { useEffect, Suspense } from "react";
 
 export default function Page() {
-  const [query] = useQueryState("q", parseAsString.withDefault(""));
-  const [genre] = useQueryState("genre", parseAsString.withDefault(""));
-
-  const showGenresList = !query && !genre;
-
   return (
     <ViewTransition name="main-content">
       <main>
         <div className="px-8 py-12 space-y-8">
-          {showGenresList ? <GenresList /> : <ResultsList />}
+          <Suspense fallback={<div>Loading...</div>}>
+            <PageContent />
+          </Suspense>
         </div>
       </main>
     </ViewTransition>
   );
 }
 
+function PageContent() {
+  const [query] = useQueryState("q", parseAsString.withDefault(""));
+  const [genre] = useQueryState("genre", parseAsString.withDefault(""));
+
+  const showGenresList = !query && !genre;
+
+  return showGenresList ? <GenresList /> : <ResultsList />;
+}
+
 function ResultsList() {
   const [search] = useQueryState("q", parseAsString.withDefault(""));
   const [genre] = useQueryState("genre", parseAsString.withDefault(""));
   const [limit] = useQueryState("limit", parseAsInteger.withDefault(25));
-  const [page] = useQueryState("page", parseAsInteger.withDefault(1));
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
 
-  const { data } = useQuery(
+  // avoids a possible bug where you've navigated to a page in one genre,
+  // then change genres or search and now nothing shows up
+  useEffect(() => {
+    if (page !== 1) {
+      setPage(1);
+    }
+  }, [search, genre, setPage]);
+
+  const { data, isLoading } = useQuery(
     getMoviesOptions({ queryParams: { search, genre, page, limit } })
   );
+
   const movies = data?.data ?? [];
+  const totalPages = data?.totalPages ?? 1;
+
+  // Fetch the last page to get accurate total count
+  const { data: lastPageData } = useQuery(
+    getMoviesOptions({
+      queryParams: { search, genre, page: totalPages, limit },
+    })
+  );
+
+  // Ensure that we have an accurate count and aren't just guessing
+  // Note: normally pagination apis provide a totalCount to avoid needing this
+  // since it creates an extra network hop 🤷‍♂️
+  const totalCount = lastPageData
+    ? (totalPages - 1) * limit + lastPageData.data.length
+    : totalPages * limit;
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="text-sm text-muted-foreground">Loading results...</div>
+      </div>
+    );
+  }
 
   if (movies.length === 0) {
-    return <div>No results found</div>;
+    return (
+      <div className="text-center py-12">
+        <p className="text-lg text-muted-foreground">No results found</p>
+      </div>
+    );
   }
 
   return (
-    <>
-      {movies.map((movie) => (
-        <div key={movie.id} className="p-4 border-b border-border">
-          <h2 className="text-xl font-semibold">{movie.title}</h2>
+    <div className="space-y-6">
+      <div className="flex items-end justify-between">
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight">
+            Titles Found - {totalCount}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-2">
+            {totalPages} {totalPages === 1 ? "page" : "pages"}
+          </p>
         </div>
-      ))}
-    </>
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
+        )}
+      </div>
+      <div className="grid grid-cols-5 gap-2">
+        {movies.map((movie) => (
+          <MovieSearchResult key={movie.id} id={movie.id} />
+        ))}
+      </div>
+      {totalPages > 1 && (
+        <div className="flex justify-center pt-8">
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -59,7 +130,10 @@ function GenresList() {
   // to treat this as a computed value as it returns the same reference
   const genres = data?.data ?? [];
 
-  const [, setGenre] = useQueryState("genre", parseAsString.withDefault(""));
+  const [_genre, setGenre] = useQueryState(
+    "genre",
+    parseAsString.withDefault("")
+  );
 
   return (
     <div className="space-y-6">

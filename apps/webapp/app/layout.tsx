@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     default: "Movies Explorer",
     template: "%s | Movies Explorer",
   },
-  description: "Discover and explore your favorite movies",
+  description: "Search and view movies",
 };
 
 export default function RootLayout({
@@ -24,7 +24,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
   header: React.ReactNode;
-  modal: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={lexend.variable}>

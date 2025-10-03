@@ -1,0 +1,29 @@
+{
+  "name": "@jfontanez/mcp-example",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx --tsconfig tsconfig.json src/index.ts",
+    "deploy": "wrangler deploy --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "dependencies": {
+    "@hono/mcp": "^0.1.4",
+    "@hono/node-server": "^1.19.5",
+    "@jfontanez/api-client": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.19.1",
+    "hono": "^4.9.9",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@jfontanez/eslint-config": "workspace:*",
+    "@jfontanez/typescript-config": "workspace:*",
+    "@types/node": "^22.15.3",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.20.6",
+    "typescript": "5.9.2",
+    "wrangler": "^4.4.0"
+  }
+}

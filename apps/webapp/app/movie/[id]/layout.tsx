@@ -1,6 +1,7 @@
 import { getQueryClient } from "@/lib/get-query-client";
 import { getMovieByIdOptions } from "@jfontanez/tanstack-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Suspense } from "react";
 
 export default async function MoviePage({
   params,
@@ -20,7 +21,9 @@ export default async function MoviePage({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className="min-h-screen">{children}</div>
+      <Suspense fallback={<div>loading</div>}>
+        <div className="min-h-screen">{children}</div>
+      </Suspense>
     </HydrationBoundary>
   );
 }

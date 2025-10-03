@@ -36,6 +36,7 @@ type RequestValue<T extends (...args: any) => any> = Parameters<
   ReturnType<ReturnType<T>>
 >[0];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type OverrideOptions = Omit<
   Parameters<typeof queryOptions>[0],
   "queryKey" | "queryFn"

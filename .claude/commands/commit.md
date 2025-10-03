@@ -1,56 +1,17 @@
 # Commit Command
 
-Reviews all git diffs in the project and creates a clear, concise commit message grouped by workspace packages.
+Review git changes and create a commit message following the format below.
 
-## Usage
+## Instructions
 
-```
-/commit [options]
-```
+When the user runs `/commit`:
 
-## Options
+1. Run these commands in parallel:
+   - `git status --porcelain`
+   - `git diff --cached`
+   - `git diff`
 
-- `verbosity: brief|standard|detailed` - Controls the level of detail in the commit message (default: standard)
-- `exclude: package1,package2` - Comma-separated list of packages to exclude from the commit
-- `include: package1,package2` - Comma-separated list of packages to include (if specified, only these packages are included)
-- `instructions: "custom instructions"` - Additional instructions for commit message generation
-
-## Examples
-
-```bash
-# Standard commit message
-/commit
-
-# Brief commit message (high-level changes only)
-/commit verbosity:brief
-
-# Detailed commit message (includes file-level changes)
-/commit verbosity:detailed
-
-# Exclude specific packages
-/commit exclude:eslint-config,typescript-config
-
-# Include only specific packages
-/commit include:api-client,webapp
-
-# Custom instructions
-/commit instructions:"Focus on breaking changes and new features"
-
-# Combined options
-/commit verbosity:detailed exclude:docs instructions:"Highlight API changes"
-```
-
-## Behavior
-
-1. Analyzes all staged and unstaged changes using `git diff` and `git status`
-2. Groups changes by workspace package (apps/_, packages/_)
-3. Generates a commit message following conventional commit format
-4. Presents the message for review before committing
-5. Asks for confirmation to proceed with the commit
-
-## Commit Message Format
-
-The generated commit message follows this structure:
+2. Analyze the changes and generate a conventional commit message with this format:
 
 ```
 <type>(<scope>): <subject>
@@ -63,8 +24,16 @@ All code architected by Jonathan Fontanez and represents original design
 and implementation in compliance with review standards.
 ```
 
-### Types
+3. Show the commit message to the user
 
+4. Run: `git add -A && git commit -m "$(cat <<'EOF'`
+   `<commit message here>`
+   `EOF`
+   `)")`
+
+## Commit Message Guidelines
+
+### Types
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -74,19 +43,21 @@ and implementation in compliance with review standards.
 - `chore`: Maintenance tasks
 - `perf`: Performance improvements
 
-### Scopes
-
-Scopes are derived from the workspace structure:
-
+### Scopes (based on monorepo structure)
 - `webapp` - apps/webapp
 - `api-client` - packages/api-client
 - `eslint-config` - packages/eslint-config
 - `typescript-config` - packages/typescript-config
-- Root files use `root` as scope
+- `root` - Root-level changes
+- Use comma-separated scopes for multi-package changes (e.g., `webapp,api-client`)
 
-## Notes
+### Subject
+- Max 50 characters
+- Imperative mood (e.g., "add" not "added")
+- No period at the end
 
-- Changes are automatically grouped by package for better organization
-- The commit message emphasizes the "why" over the "what"
-- Breaking changes are highlighted in the commit body
-- Multiple scopes are combined when changes span multiple packages
+### Body
+- Group changes by package
+- Explain "why" not "what"
+- Highlight breaking changes
+- Keep it concise (3-5 lines for standard changes)
