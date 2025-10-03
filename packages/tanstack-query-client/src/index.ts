@@ -103,6 +103,7 @@ export const getMovieByIdOptions = (
       return GET_MOVIE_BY_ID(BASE_URL)(token)(request);
     },
     enabled: !!request.params.id,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
 export const getMoviesTitlesOptions = (

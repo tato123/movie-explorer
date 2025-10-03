@@ -39,7 +39,7 @@ export default function Header({ className }: { className?: string }) {
   const handleCloseClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      router.push("/");
+      router.back();
     },
     [router]
   );
