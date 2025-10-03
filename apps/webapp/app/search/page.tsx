@@ -41,13 +41,12 @@ function ResultsList() {
   const [limit] = useQueryState("limit", parseAsInteger.withDefault(25));
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
 
-  // avoids a possible bug where you've navigated to a page in one genre,
-  // then change genres or search and now nothing shows up
   useEffect(() => {
     if (page !== 1) {
       setPage(1);
     }
-  }, [search, genre, setPage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, genre]);
 
   const { data, isLoading } = useQuery(
     getMoviesOptions({ queryParams: { search, genre, page, limit } })

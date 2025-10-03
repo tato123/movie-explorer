@@ -1,16 +1,15 @@
 "use client";
 
+import GenreSection from "@/components/genre-section";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatIso8601Duration } from "@/lib/utils";
 import { getMovieByIdOptions } from "@jfontanez/tanstack-query-client";
 import { useQuery } from "@tanstack/react-query";
+import { Film } from "lucide-react";
 import Image from "next/image";
 import { use, useEffect, useMemo, useState } from "react";
 import NotFound from "./not-found";
-import GenreSection from "@/components/genre-section";
-import { formatDuration } from "date-fns";
-import { parse, toSeconds } from "iso8601-duration";
-import { Film } from "lucide-react";
 
 export default function Movie({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -21,27 +20,12 @@ export default function Movie({ params }: { params: Promise<{ id: string }> }) {
   } = useQuery(getMovieByIdOptions({ params: { id } }));
   const [imageError, setImageError] = useState(false);
 
-  // This is an  ISO 8601 duration returned by the api (PT1H30M)
+  // This is an ISO 8601 duration returned by the api (PT1H30M)
   // this conversion makes it a little easier to read
-  const humanReadableDuration = useMemo(() => {
-    const defaultValue = movie?.duration ?? "";
-    try {
-      if (!movie?.duration) {
-        return defaultValue;
-      }
-      const duration = parse(movie.duration);
-      const totalSeconds = toSeconds(duration);
-      const hours = Math.floor(totalSeconds / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-
-      return formatDuration(
-        { hours, minutes },
-        { format: ["hours", "minutes"], zero: false }
-      );
-    } catch {
-      return defaultValue;
-    }
-  }, [movie?.duration]);
+  const humanReadableDuration = useMemo(
+    () => formatIso8601Duration(movie?.duration),
+    [movie?.duration]
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -68,7 +52,7 @@ export default function Movie({ params }: { params: Promise<{ id: string }> }) {
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             {movie.ratingValue !== undefined && (
               <span className="text-green-500 font-semibold">
-                Rating {movie.ratingValue} <br />
+                Rating {movie.ratingValue}
               </span>
             )}
             {movie.datePublished && (

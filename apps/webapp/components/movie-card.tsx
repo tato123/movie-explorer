@@ -73,7 +73,11 @@ export function MovieCard({
                 className={cn(
                   "object-contain movie-poster transition-opacity group-hover:opacity-75 h-full w-full aspect-[2/3]"
                 )}
-                onError={() => setImageError(true)}
+                onError={(e) => {
+                  e.preventDefault();
+                  setImageError(true);
+                }}
+                unoptimized
               />
             ) : (
               <div className="flex h-full items-center justify-center bg-gradient-to-br from-muted to-muted/50">

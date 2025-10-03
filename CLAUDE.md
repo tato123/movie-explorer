@@ -122,6 +122,42 @@ export default function Page() {
 3. CSS controls animation behavior via `::view-transition-old()` and `::view-transition-new()` pseudo-elements
 4. Browser automatically animates between pages when navigating
 
+## Testing Strategy
+
+This project uses **AI-driven testing** with custom subagents instead of traditional unit tests:
+
+### Available Test Agents
+
+#### E2E Tester (`@e2e-tester`)
+Comprehensive end-to-end testing through realistic user scenarios:
+- Automatically manages dev/production server startup
+- Tests all user workflows with permutations (search, filter, pagination, navigation)
+- Validates across multiple viewports (desktop, tablet, mobile)
+- Monitors console errors and performance
+- Creates varied navigation patterns to catch integration issues
+
+**When to use**: After implementing features, fixing bugs, or before submitting changes
+
+#### Code Analyzer (`@code-analyzer`)
+Deep code analysis focused on logic errors and business rules:
+- Identifies potential runtime errors (null checks, async issues, race conditions)
+- Validates business logic implementation
+- Checks error handling coverage
+- Reviews state management for infinite loops or stale data
+- Analyzes API integration patterns
+
+**When to use**: After refactoring, implementing complex logic, or when unsure about edge cases
+
+### Testing Philosophy
+
+These agents provide better coverage than traditional unit tests by:
+- Testing actual user workflows end-to-end, not isolated functions
+- Catching integration issues between components and API
+- Adapting to UI changes without brittle selectors or mocks
+- Validating business rules in real scenarios
+
+**When writing code**: Focus on functionality and clean architecture. Let the AI agents handle comprehensive testing validation.
+
 ## Important Notes
 
 - **Node Version**: Requires Node.js >=18
@@ -129,3 +165,4 @@ export default function Page() {
 - **No Documentation Files**: Never proactively create .md files or READMEs unless explicitly requested
 - **Authentication**: All API endpoints (except `/auth/token`) require Bearer token authentication
 - **Pagination**: API uses `page` (starting at 1) and `limit` query parameters for pagination
+- **Testing**: Use `@e2e-tester` for workflow validation and `@code-analyzer` for logic review instead of writing traditional unit tests
